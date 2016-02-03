@@ -26,7 +26,7 @@ def get_attr(sqla_object, attribute):
     output = sqla_object
     for x in attribute.split('.'):
         if type(output) is InstrumentedList:
-            output = ', '.join([getattr(elem, x) for elem in output])
+            output = ', '.join([getattr(elem, x, None) for elem in output])
         else:
             output = getattr(output, x, None)
     return output
