@@ -1,13 +1,9 @@
 """App configuration."""
 from setuptools import setup
 
-
-__VERSION__ = '0.2.1'
-
-
 setup(
     name='sqlalchemy-datatables',
-    version=__VERSION__,
+    version='0.001.%s' % int(time()),
     description='SQLAlchemy integration of jQuery DataTables',
     long_description=open('README.rst').read(),
     license='MIT',
