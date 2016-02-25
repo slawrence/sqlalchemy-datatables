@@ -1,4 +1,5 @@
 """App configuration."""
+from time import time
 from setuptools import setup
 
 setup(
