@@ -18,7 +18,7 @@ if sys.version_info > (3, 0):
 
 ColumnTuple = namedtuple(
     'ColumnDT',
-    ['column_name', 'mData', 'search_like', 'filter', 'searchable'])
+    ['column_name', 'index', 'mData', 'search_like', 'filter', 'searchable'])
 
 
 def get_attr(sqla_object, attribute):
@@ -38,6 +38,9 @@ class ColumnDT(ColumnTuple):
 
     :param column_name: name of the column as defined by the SQLAlchemy model
     :type column_name: str
+    :param index: When joining queries, this param indicates index where column
+        can be found
+    :type index: int
     :param mData: name of the mData property as defined in the
         DataTables javascript options (default None)
     :type mData: str
@@ -55,7 +58,7 @@ class ColumnDT(ColumnTuple):
     :returns: a ColumnDT object
     """
 
-    def __new__(cls, column_name, mData=None, search_like=True,
+    def __new__(cls, column_name, index=0, mData=None, search_like=True,
                 filter=str, searchable=True):
         """Set default values for mData and filter.
 
@@ -63,7 +66,7 @@ class ColumnDT(ColumnTuple):
         filter (cause: Object representation is not JSON serializable).
         """
         return super(ColumnDT, cls).__new__(
-            cls, column_name, mData, search_like, filter, searchable)
+            cls, column_name, index, mData, search_like, filter, searchable)
 
 
 class DataTables:
@@ -166,7 +169,10 @@ class DataTables:
             row = dict()
             for j in range(len(self.columns)):
                 col = self.columns[j]
-                tmp_row = get_attr(self.results[i], col.column_name)
+                if isinstance(self.results[i], (tuple, list)):
+                    tmp_row = get_attr(self.results[i][col.index], col.column_name)
+                else:
+                    tmp_row = get_attr(self.results[i], col.column_name)
                 if col.filter:
                     if sys.version_info < (3, 0) \
                             and hasattr(tmp_row, 'encode'):
